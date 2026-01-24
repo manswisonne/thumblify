@@ -353,6 +353,7 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import MongoStore from 'connect-mongo/build/main/lib/MongoStore.js';
 
 // 1. Recreate __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -361,6 +362,7 @@ const __dirname = path.dirname(__filename);
 import AuthRouter from './routes/AuthRoutes.js';
 import ThumbnailRouter from './routes/ThumbnailRoutes.js';
 import UserRouter from './routes/UserRoutes.js';
+import MongoStore from 'connect-mongo/build/main/lib/MongoStore.js';
 
 declare module 'express-session' {
     interface SessionData {
@@ -390,12 +392,22 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-        httpOnly: true,
-        secure: false, // Set to true if using HTTPS
-        sameSite: 'lax'
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'none',
+    path: '/',
+    },
+     // Set to true if using HTTPS},
+        // httpOnly: true,
+        // secure: false, // Set to true if using HTTPS
+        // sameSite: 'lax'
+        store: MongoStore.create({
+            mongoURL : process.env.MONGODB_URI as string,
+            collectionName: 'sessions',
+        })
     }
-}));
+,));
 
 // Connect to MongoDB
 const startServer = async () => {
