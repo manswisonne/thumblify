@@ -362,7 +362,7 @@ const __dirname = path.dirname(__filename);
 import AuthRouter from './routes/AuthRoutes.js';
 import ThumbnailRouter from './routes/ThumbnailRoutes.js';
 import UserRouter from './routes/UserRoutes.js';
-import MongoStore from 'connect-mongo/build/main/lib/MongoStore.js';
+import MongoStore from 'connect-mongo';
 
 declare module 'express-session' {
     interface SessionData {
