@@ -353,7 +353,7 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import MongoStore from 'connect-mongo/build/main/lib/MongoStore.js';
+// import MongoStore from 'connect-mongo/build/main/lib/MongoStore.js';
 
 // 1. Recreate __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -403,7 +403,7 @@ app.use(session({
         // secure: false, // Set to true if using HTTPS
         // sameSite: 'lax'
         store: MongoStore.create({
-            mongoURL : process.env.MONGODB_URI as string,
+            mongoUrl : process.env.MONGODB_URI as string,
             collectionName: 'sessions',
         })
     }
