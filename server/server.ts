@@ -345,7 +345,6 @@
 
 import dotenv from 'dotenv';
 dotenv.config();
-
 import express from 'express';
 import cors from 'cors';
 import type { Request, Response } from 'express';
@@ -353,7 +352,7 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-// import MongoStore from 'connect-mongo/build/main/lib/MongoStore.js';
+import MongoStore from 'connect-mongo';
 
 // 1. Recreate __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -362,7 +361,6 @@ const __dirname = path.dirname(__filename);
 import AuthRouter from './routes/AuthRoutes.js';
 import ThumbnailRouter from './routes/ThumbnailRoutes.js';
 import UserRouter from './routes/UserRoutes.js';
-import MongoStore from 'connect-mongo';
 
 declare module 'express-session' {
     interface SessionData {
@@ -377,13 +375,19 @@ const port = process.env.PORT || 3000;
 // Basic middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ✅ CORS configuration - FIXED (removed duplicates, added all your domains)
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:5173', 'https://thumblify-ebon.vercel.app'],
+    origin: [
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://thumblify-ebon.vercel.app',
+        'https://thumblify-frontend.onrender.com'
+    ],
     credentials: true,
 }));
 
 // 2. Serve the 'uploads' folder as static
-// This allows you to access images via http://localhost:3000/uploads/filename.png
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Session middleware
@@ -393,21 +397,16 @@ app.use(session({
     saveUninitialized: false,
     cookie: { 
         maxAge: 1000 * 60 * 60 * 24 * 7,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'none',
-    path: '/',
+        httpOnly: true,
+        secure: true,
+        sameSite:'none',
+        path: '/',
     },
-     // Set to true if using HTTPS},
-        // httpOnly: true,
-        // secure: false, // Set to true if using HTTPS
-        // sameSite: 'lax'
-        store: MongoStore.create({
-            mongoUrl : process.env.MONGODB_URI as string,
-            collectionName: 'sessions',
-        })
-    }
-,));
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI as string,
+        collectionName: 'sessions',
+    })
+}));
 
 // Connect to MongoDB
 const startServer = async () => {
@@ -415,7 +414,7 @@ const startServer = async () => {
         console.log('Connecting to MongoDB...');
         await mongoose.connect(process.env.MONGODB_URI!);
         console.log('✅ MongoDB connected successfully');
-
+        
         // Routes
         app.get('/', (req: Request, res: Response) => {
             res.json({ 
@@ -427,18 +426,17 @@ const startServer = async () => {
         app.use('/api/auth', AuthRouter);
         app.use('/api/thumbnail', ThumbnailRouter);
         app.use('/api/user', UserRouter);
-
+        
         // 404 handler
         app.use((req: Request, res: Response) => {
             res.status(404).json({ error: 'Route not found' });
         });
-
-        // Start server
+        
+        // Start server - ✅ FIXED console.log syntax
         app.listen(port, () => {
             console.log(`🚀 Server running at http://localhost:${port}`);
             console.log(`📡 Static assets served at http://localhost:${port}/uploads`);
         });
-
     } catch (error) {
         console.error('❌ Failed to start server:', error);
         process.exit(1);

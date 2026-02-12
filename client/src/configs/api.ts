@@ -8,8 +8,10 @@
 // export default api;
 import axios from 'axios';
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://thumblify-1.onrender.com';
+
 const api = axios.create({
-  baseURL: '/api',              // ← relative path – Vite proxy will handle the rest
+  baseURL: API_URL,  // ✅ Fixed - API_URL is now a proper string
   withCredentials: true,
 });
 
