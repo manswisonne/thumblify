@@ -1,17 +1,18 @@
 {
     "compilerOptions": {
         "target": "ES2020",
-        "module": "ESNext",
-    "moduleResolution": "bundler",
+        "module": "CommonJS",
+    "moduleResolution": "Node",
         "outDir": "./dist",
-        "rootDir": "./",
+        "rootDir": "./server",
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "noEmit":false
     },
     "include": [
-        "./**/*.ts"
+        "server/**/*.ts"
     ],
     "exclude": [
         "node_modules"
