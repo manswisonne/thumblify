@@ -183,4 +183,8 @@ export const verifyUser = async (req: Request, res: Response) => {
         console.error("Error verifying user:", error);
         res.status(500).json({ message: "Server error" });
     }
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> bb2cdc8ab04e1a64148d2a721c42ec328f28945c
