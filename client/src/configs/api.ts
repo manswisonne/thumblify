@@ -9,7 +9,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',              // ← relative path – Vite proxy will handle the rest
+  baseURL: `${https://thumblify-1.onrender.com}/api`,              // ← relative path – Vite proxy will handle the rest
   withCredentials: true,
 });
 
