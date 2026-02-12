@@ -23,10 +23,10 @@ const AuthRouter = express.Router();
 // Public routes
 AuthRouter.post('/register', registerUser);
 AuthRouter.post('/login', loginUser);
-AuthRouter.get('/verify',protect, verifyUser);
+AuthRouter.get('/verify',auth, verifyUser);
 
 // Protected routes (add these)
-AuthRouter.post('/logout',protect, logoutUser);
+AuthRouter.post('/logout',auth, logoutUser);
 AuthRouter.get('/profile', getUserProfile);
 
 export default AuthRouter;
