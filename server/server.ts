@@ -386,6 +386,17 @@ app.use(cors({
 // This allows you to access images via http://localhost:3000/uploads/filename.png
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+import cors from 'cors';
+
+app.use(cors({
+  origin: [
+    'http://localhost:5173',  // local dev
+    'https://thumblify-frontend.onrender.com'  // ✅ Add your Render frontend
+  ],
+  credentials: true
+}));
+
+
 // Session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET!,
