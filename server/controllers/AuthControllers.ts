@@ -2,6 +2,7 @@
 import type { Request, Response } from 'express';
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
+import { generateToken } from '../middlewares/jwt.js';
 
 // Controller for user registration
 export const registerUser = async (req: Request, res: Response) => {
@@ -35,8 +36,12 @@ export const registerUser = async (req: Request, res: Response) => {
         req.session.isLoggedIn = true;
         req.session.userId = newUser._id.toString();
         
+        // Generate JWT token
+        const token = generateToken(newUser._id.toString());
+        
         return res.status(201).json({
             message: "User registered successfully",
+            token, // Send token to frontend
             user: {
                 _id: newUser._id,
                 name: newUser.name,
@@ -47,7 +52,7 @@ export const registerUser = async (req: Request, res: Response) => {
         console.error("Error registering user:", error);
         res.status(500).json({ message: "Server error" });
     }
-}
+};
 
 // Controller for user login
 export const loginUser = async (req: Request, res: Response) => {
@@ -75,8 +80,15 @@ export const loginUser = async (req: Request, res: Response) => {
         req.session.isLoggedIn = true;
         req.session.userId = user._id.toString();
         
+        // Generate JWT token
+        const token = generateToken(user._id.toString());
+        
+        console.log('✅ Login successful, token generated');
+        
         return res.status(200).json({
             message: "Login successful",
+            success: true,
+            token, // Send token to frontend
             user: {
                 _id: user._id,
                 name: user.name,
@@ -87,7 +99,7 @@ export const loginUser = async (req: Request, res: Response) => {
         console.error("Error logging in user:", error);
         res.status(500).json({ message: "Server error" });
     }
-}
+};
 
 // Controller for user logout
 export const logoutUser = (req: Request, res: Response) => {
@@ -110,7 +122,7 @@ export const logoutUser = (req: Request, res: Response) => {
         console.error("Error logging out user:", error);
         res.status(500).json({ message: "Server error" });
     }
-}
+};
 
 // Controller for getting user profile
 export const getUserProfile = async (req: Request, res: Response) => {
@@ -138,9 +150,9 @@ export const getUserProfile = async (req: Request, res: Response) => {
         console.error("Error getting user profile:", error);
         res.status(500).json({ message: "Server error" });
     }
-}
+};
 
-// Controller for verifying user (if you need this)
+// Controller for verifying user
 export const verifyUser = async (req: Request, res: Response) => {
     try {
         if (!req.session.isLoggedIn || !req.session.userId) {
@@ -171,4 +183,4 @@ export const verifyUser = async (req: Request, res: Response) => {
         console.error("Error verifying user:", error);
         res.status(500).json({ message: "Server error" });
     }
-}
+};
