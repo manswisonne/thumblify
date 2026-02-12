@@ -16,7 +16,7 @@ import {
     logoutUser,
     getUserProfile
 } from '../controllers/AuthControllers.js'; // ADD .js extension here!
-import {protect} from '../middlewares/auth.js';
+import {auth} from '../middlewares/auth.js';
 
 const AuthRouter = express.Router();
 
