@@ -213,9 +213,10 @@ export const generateThumbnail = async (req: Request, res: Response) => {
 };
 
 export const deleteThumbnail = async (req: Request, res: Response) => {
-    try {
+   try {
         const { id } = req.params;
-        const userId = req.session.userId;
+        // ✅ Use JWT userId instead of session
+        const userId = (req as any).userId;
         
         if (!userId) {
             return res.status(401).json({ message: 'Unauthorized' });
