@@ -6,12 +6,9 @@ import fs from 'fs';
 import { v2 as cloudinary } from 'cloudinary';
 
 // Configure Cloudinary (if you want to upload, otherwise save locally)
-if (process.env.CLOUDINARY_CLOUD_NAME) {
-    cloudinary.config({
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-        api_key: process.env.CLOUDINARY_API_KEY,
-        api_secret: process.env.CLOUDINARY_API_SECRET
-    });
+if (process.env.CLOUDINARY_URL) {
+    cloudinary.config();
+    
 }
 
 const colorSchemes: Record<string, { bg: string; accent: string; text: string }> = {
