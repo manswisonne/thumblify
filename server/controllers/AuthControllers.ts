@@ -59,48 +59,57 @@ export const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         
-        // Validate input
         if (!email || !password) {
             return res.status(400).json({ message: "Email and password are required" });
         }
         
-        // Find user by email in db
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "Invalid email or password" });
         }
         
-        // Check password
         const isMatch = await bcrypt.compare(password, user.password!);
         if (!isMatch) {
             return res.status(400).json({ message: "Invalid email or password" });
         }
         
-        // Setting user data in session
         req.session.isLoggedIn = true;
         req.session.userId = user._id.toString();
         
-        // Generate JWT token
-        const token = generateToken(user._id.toString());
+        console.log('🔵 About to generate token...');
+        console.log('🔵 User ID:', user._id.toString());
         
-        console.log('✅ Login successful, token generated');
+        let token;
+        try {
+            token = generateToken(user._id.toString());
+            console.log('✅ Token generated:', !!token);
+            console.log('✅ Token value:', token?.substring(0, 30) + '...');
+        } catch (err) {
+            console.error('❌ Error generating token:', err);
+        }
         
-        return res.status(200).json({
+        console.log('🔵 Preparing response...');
+        console.log('🔵 Response will include token:', !!token);
+        
+        const response = {
             message: "Login successful",
             success: true,
-            token, // Send token to frontend
+            token: token,
             user: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
             }
-        });
+        };
+        
+        console.log('🔵 Final response object:', JSON.stringify(response, null, 2));
+        
+        return res.status(200).json(response);
     } catch (error: any) {
-        console.error("Error logging in user:", error);
+        console.error("❌ Error logging in user:", error);
         res.status(500).json({ message: "Server error" });
     }
 };
-
 // Controller for user logout
 export const logoutUser = (req: Request, res: Response) => {
     try {
