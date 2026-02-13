@@ -159,7 +159,7 @@ export const generateThumbnail = async (req: Request, res: Response) => {
         // Option 1: Upload to Cloudinary (if configured)
         let imageUrl: string;
         
-        if (process.env.CLOUDINARY_CLOUD_NAME) {
+        if (process.env.CLOUDINARY_URL) {
             // Save to temp file first
             const tempPath = path.join('uploads', `thumb-${Date.now()}.png`);
             fs.mkdirSync('uploads', { recursive: true });
