@@ -46,7 +46,7 @@ const wrapText = (ctx: any, text: string, maxWidth: number) => {
 
 export const generateThumbnail = async (req: Request, res: Response) => {
     try {
-        const { userId } = req.session;
+        const userId = (req as any).userId;
         
         if (!userId) {
             return res.status(401).json({ message: 'Unauthorized. Please login first.' });
