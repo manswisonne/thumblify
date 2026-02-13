@@ -4,12 +4,17 @@ import { verifyToken } from './jwt.js';
 
 export const auth = (req: Request, res: Response, next: NextFunction) => {
     try {
-        // Check both 'Authorization' and 'authorization' (case-insensitive)
-        const authHeader = req.headers.authorization || req.headers.Authorization;
+        // Get authorization header (handle both cases and array type)
+        let authHeader = req.headers.authorization || req.headers.Authorization;
         
-        console.log('🔍 Auth middleware - Headers:', req.headers.authorization);
+        // If it's an array, take the first element
+        if (Array.isArray(authHeader)) {
+            authHeader = authHeader[0];
+        }
         
-        if (!authHeader) {
+        console.log('🔍 Auth middleware - Headers:', authHeader);
+        
+        if (!authHeader || typeof authHeader !== 'string') {
             console.log('❌ No authorization header found');
             return res.status(401).json({ error: 'No token provided' });
         }
